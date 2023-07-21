@@ -108,7 +108,7 @@ if [ $OSNAME != "macos" ];then
 
 	# 直接使用本地包安装
 	if [ -d acme.sh ];then
-		cd acme.sh ; bash acme.sh install
+		bash acme.sh/acme.sh install
 	fi
 	# install acme.sh
 	if [ ! -d /root/.acme.sh ];then
