@@ -86,35 +86,23 @@ if [ $OSNAME != "macos" ];then
 	mkdir -p /www/backup/site
 
 	if [ ! -d /www/server/mdserver-web ];then
-
-		if [ "$LOCAL_ADDR" == "common" ];then
-			curl --insecure -sSLo /tmp/dev.zip ${HTTP_PREFIX}github.com/midoks/mdserver-web/archive/refs/heads/dev.zip
-			cd /tmp && unzip /tmp/dev.zip
-			mv -f /tmp/mdserver-web-dev /www/server/mdserver-web
-			rm -rf /tmp/dev.zip
-			rm -rf /tmp/mdserver-web-dev
+	_mdsw_sha256=$(echo $(sha256sum third_party/mdserver-web.tar.gz) |awk '{print $1}')
+		if [ "415f6c84d76a868a57cefa9546c1126b45830156aa682357064cec780f4edae0" == "${_mdsw_sha256}" ];then
+			tar xf third_party/mdserver-web.tar.gz -C /www/server
 		else
-			curl --insecure -sSLo /tmp/dev.zip https://code.midoks.me/midoks/mdserver-web/archive/dev.zip
-			cd /tmp && unzip /tmp/dev.zip
-			mv -f /tmp/mdserver-web /www/server/mdserver-web
-			rm -rf /tmp/dev.zip
-			rm -rf /tmp/mdserver-web
-		fi	
-	fi
+			echo  "mdserver-web.tar.gz 校验不通过"
+			exit 2
+		fi
+	fi	
 
-	# install acme.sh
-	if [ ! -d /root/.acme.sh ];then
-	    if [ "$LOCAL_ADDR" != "common" ];then
-	        # curl -sSL -o /tmp/acme.tar.gz ${HTTP_PREFIX}github.com/acmesh-official/acme.sh/archive/master.tar.gz
-	        curl --insecure -sSLo /tmp/acme.tar.gz https://gitee.com/neilpang/acme.sh/repository/archive/master.tar.gz
-	        tar xvzf /tmp/acme.tar.gz -C /tmp
-	        cd /tmp/acme.sh-master
-	        bash acme.sh install
-	    fi
-
-	    if [ ! -d /root/.acme.sh ];then
-	        curl  https://get.acme.sh | sh
-	    fi
+	# install acme.sh acme.sh 包已包含在 scripts/third_party/acme.sh 下
+	_acme_sha256=$(echo $(sha256sum third_party/acme.sh.tar.gz)| awk '{print $1}')
+	if [ "14a28e2dfd452ffb039ab05c7ced48997917c5525029719693229d840b99e53b" == "${_acme_sha256}" ];then
+		tar xf third_party/acme.sh.tar.gz -C third_party
+		cd third_part/acme.sh && bash acme.sh install
+	else
+		echo "acm.sh.tar.gz 校验不通过"
+		exit 2
 	fi
 fi
 
