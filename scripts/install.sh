@@ -2,193 +2,157 @@
 PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
 export PATH
 # LANG=en_US.UTF-8
-is64bit=`getconf LONG_BIT`
+is64bit=$(getconf LONG_BIT)
 
 {
 
-if [ -f /etc/motd ];then
-    echo "welcome to mdserver-web panel" > /etc/motd
-fi
-
-startTime=`date +%s`
-
-_os=`uname`
-echo "use system: ${_os}"
-
-if [ "$EUID" -ne 0 ]
-  then echo "Please run as root!"
-  exit
-fi
-
-if [ ${_os} == "Darwin" ]; then
-	OSNAME='macos'
-elif grep -Eqi "openSUSE" /etc/*-release; then
-	OSNAME='opensuse'
-	zypper refresh
-	zypper install cron wget curl zip unzip
-elif grep -Eqi "FreeBSD" /etc/*-release; then
-	OSNAME='freebsd'
-elif grep -Eqi "CentOS" /etc/issue || grep -Eqi "CentOS" /etc/*-release; then
-	OSNAME='rhel'
-	yum install -y wget curl zip unzip tar crontabs
-elif grep -Eqi "Fedora" /etc/issue || grep -Eqi "Fedora" /etc/*-release; then
-	OSNAME='rhel'
-	yum install -y wget curl zip unzip tar crontabs
-elif grep -Eqi "Rocky" /etc/issue || grep -Eqi "Rocky" /etc/*-release; then
-	OSNAME='rhel'
-	yum install -y wget curl zip unzip tar crontabs
-elif grep -Eqi "AlmaLinux" /etc/issue || grep -Eqi "AlmaLinux" /etc/*-release; then
-	OSNAME='rhel'
-	yum install -y wget curl zip unzip tar crontabs
-elif grep -Eqi "Amazon Linux" /etc/issue || grep -Eqi "Amazon Linux" /etc/*-release; then
-	OSNAME='amazon'
-	yum install -y wget curl zip unzip tar crontabs
-elif grep -Eqi "Debian" /etc/issue || grep -Eqi "Debian" /etc/os-release; then
-	OSNAME='debian'
-	apt update -y
-	apt install -y wget curl zip unzip tar cron
-elif grep -Eqi "Ubuntu" /etc/issue || grep -Eqi "Ubuntu" /etc/os-release; then
-	OSNAME='ubuntu'
-	apt update -y
-	apt install -y wget curl zip unzip tar cron
-else
-	OSNAME='unknow'
-fi
-
-
-# HTTP_PREFIX="https://"
-# LOCAL_ADDR=common
-# ping  -c 1 github.com > /dev/null 2>&1
-# if [ "$?" != "0" ];then
-# 	LOCAL_ADDR=cn
-# 	HTTP_PREFIX="https://ghproxy.com/"
-# fi
-
-cn=$(curl -fsSL -m 10 -s http://ipinfo.io/json | grep "\"country\": \"CN\"")
-HTTP_PREFIX="https://"
-LOCAL_ADDR=common
-if [ ! -z "$cn" ];then
-	LOCAL_ADDR=cn
-    HTTP_PREFIX="https://ghproxy.com/"
-fi
-
-echo "local:${LOCAL_ADDR}"
-
-if [ $OSNAME != "macos" ];then
-	if id www &> /dev/null ;then 
-	    echo ""
-	else
-	    groupadd www
-		useradd -g www -s /bin/bash www
+	if [ -f /etc/motd ]; then
+		echo "welcome to mdserver-web panel" >/etc/motd
 	fi
 
-	mkdir -p /www/server
-	mkdir -p /www/wwwroot
-	mkdir -p /www/wwwlogs
-	mkdir -p /www/backup/database
-	mkdir -p /www/backup/site
+	startTime=$(date +%s)
 
-	# https://cdn.jsdelivr.net/gh/midoks/mdserver-web@latest/scripts/install.sh
-	# if [ ! -d /www/server/mdserver-web ];then
-	# 	if [ "$LOCAL_ADDR" == "common" ];then
-	# 		curl --insecure -sSLo /tmp/master.zip ${HTTP_PREFIX}github.com/midoks/mdserver-web/archive/refs/heads/master.zip
-	# 		cd /tmp && unzip /tmp/master.zip
-	# 		mv -f /tmp/mdserver-web-master /www/server/mdserver-web
-	# 		rm -rf /tmp/master.zip
-	# 		rm -rf /tmp/mdserver-web-master
-	# 	else
-	# 		curl --insecure -sSLo /tmp/master.zip https://code.midoks.me/midoks/mdserver-web/archive/master.zip
-	# 		cd /tmp && unzip /tmp/master.zip
-	# 		mv -f /tmp/mdserver-web /www/server/mdserver-web
-	# 		rm -rf /tmp/master.zip
-	# 		rm -rf /tmp/mdserver-web
-	# 	fi
+	_os=$(uname)
+	echo "use system: ${_os}"
+
+	if [ "$EUID" -ne 0 ]; then
+		echo "Please run as root!"
+		exit
+	fi
+
+	if [ ${_os} == "Darwin" ]; then
+		OSNAME='macos'
+	elif grep -Eqi "openSUSE" /etc/*-release; then
+		OSNAME='opensuse'
+		zypper refresh
+		zypper install cron wget curl zip unzip
+	elif grep -Eqi "FreeBSD" /etc/*-release; then
+		OSNAME='freebsd'
+	elif grep -Eqi "CentOS" /etc/issue || grep -Eqi "CentOS" /etc/*-release; then
+		OSNAME='rhel'
+		yum install -y wget curl zip unzip tar crontabs
+	elif grep -Eqi "Fedora" /etc/issue || grep -Eqi "Fedora" /etc/*-release; then
+		OSNAME='rhel'
+		yum install -y wget curl zip unzip tar crontabs
+	elif grep -Eqi "Rocky" /etc/issue || grep -Eqi "Rocky" /etc/*-release; then
+		OSNAME='rhel'
+		yum install -y wget curl zip unzip tar crontabs
+	elif grep -Eqi "AlmaLinux" /etc/issue || grep -Eqi "AlmaLinux" /etc/*-release; then
+		OSNAME='rhel'
+		yum install -y wget curl zip unzip tar crontabs
+	elif grep -Eqi "Amazon Linux" /etc/issue || grep -Eqi "Amazon Linux" /etc/*-release; then
+		OSNAME='amazon'
+		yum install -y wget curl zip unzip tar crontabs
+	elif grep -Eqi "Debian" /etc/issue || grep -Eqi "Debian" /etc/os-release; then
+		OSNAME='debian'
+		apt update -y
+		apt install -y wget curl zip unzip tar cron
+	elif grep -Eqi "Ubuntu" /etc/issue || grep -Eqi "Ubuntu" /etc/os-release; then
+		OSNAME='ubuntu'
+		apt update -y
+		apt install -y wget curl zip unzip tar cron
+	else
+		OSNAME='unknow'
+	fi
+
+	# HTTP_PREFIX="https://"
+	# LOCAL_ADDR=common
+	# ping  -c 1 github.com > /dev/null 2>&1
+	# if [ "$?" != "0" ];then
+	# 	LOCAL_ADDR=cn
+	# 	HTTP_PREFIX="https://ghproxy.com/"
 	# fi
 
-	#mdserver-web 已包含在 third_part/mdserver-web 下
-	if [ ! -d /www/server/mdserver-web ];then
-	_mdsw_sha256=$(echo $(sha256sum third_party/mdserver-web.tar.gz) |awk '{print $1}')
-		if [ "415f6c84d76a868a57cefa9546c1126b45830156aa682357064cec780f4edae0" == "${_mdsw_sha256}" ];then
-			tar xf third_party/mdserver-web.tar.gz -C /www/server
+	cn=$(curl -fsSL -m 10 -s http://ipinfo.io/json | grep "\"country\": \"CN\"")
+	HTTP_PREFIX="https://"
+	LOCAL_ADDR=common
+	if [ ! -z "$cn" ]; then
+		LOCAL_ADDR=cn
+		HTTP_PREFIX="https://ghproxy.com/"
+	fi
+
+	echo "local:${LOCAL_ADDR}"
+
+	if [ $OSNAME != "macos" ]; then
+		if id www &>/dev/null; then
+			echo ""
 		else
-			echo  "mdserver-web.tar.gz 校验不通过"
-			exit 2
+			groupadd www
+			useradd -g www -s /bin/bash www
 		fi
-	fi	
 
-	# install acme.sh
-	# if [ ! -d /root/.acme.sh ];then
-	#     if [ "$LOCAL_ADDR" != "common" ];then
-	#         curl --insecure -sSLo /tmp/acme.tar.gz https://gitee.com/neilpang/acme.sh/repository/archive/master.tar.gz
-	#         tar xvzf /tmp/acme.tar.gz -C /tmp
-	#         cd /tmp/acme.sh-master
-	#         bash acme.sh install
-	#     fi
-	#     if [ ! -d /root/.acme.sh ];then
-	#         curl  https://get.acme.sh | sh
-	#     fi
-	# fi
+		mkdir -p /www/server
+		mkdir -p /www/wwwroot
+		mkdir -p /www/wwwlogs
+		mkdir -p /www/backup/database
+		mkdir -p /www/backup/site
 
-	# acme.sh 已包含在 scripts/third_party/acme.sh 下
-	_acme_sha256=$(echo $(sha256sum third_party/acme.sh.tar.gz)| awk '{print $1}')
-	if [ "14a28e2dfd452ffb039ab05c7ced48997917c5525029719693229d840b99e53b" == "${_acme_sha256}" ];then
-		tar xf third_party/acme.sh.tar.gz -C third_party
-		cd third_part/acme.sh && bash acme.sh install
+		# https://cdn.jsdelivr.net/gh/midoks/mdserver-web@latest/scripts/install.sh
+		_mdserver_file="scripts/third_party/mdserver-web.tar.gz"
+		_acme_file="scripts/third_party/acme.sh.tar.gz"
+		_mdsw_sha256=$(echo $(sha256sum ${_mdserver_file}) | awk '{print $1}')
+		_acme_sha256=$(echo $(sha256sum ${_acme_file}) | awk '{print $1}'	
+
+		# mdserver-web 源码包已包含在 third_part/mdserver-web 下
+		if [ ! -d /www/server/mdserver-web ]; then
+			if [[ "b8ebf3e2400daf10412c0fc1c654abda4ab7611120c0c96b56809aebeb3f582f" == "${_mdsw_sha256}" && -e ${_mdserver_file} ]]; then
+				tar xf ${_mdserver_file} -C /www/server
+			else
+				echo "${_mdserver_file} 校验不通过,New mdserver-web sha256sum : ${_mdsw_sha256}"
+				exit 2
+			fi
+		fi
+
+		# install acme.sh acme.sh 包已包含在 scripts/third_party/acme.sh 下
+		if [[ "14a28e2dfd452ffb039ab05c7ced48997917c5525029719693229d840b99e53b" == "${_acme_sha256}" && -e ${_acme_file} ]]; then
+			tar xf ${_acme_file} -C scripts/third_party/
+			cd scripts/third_party/acme.sh && bash acme.sh install
+		else
+			echo "${_acme_file} 校验不通过,New acme sha256sum : ${_acme_sha256}"
+			exit 2
+		fi	
+	fi
+
+	# macos 下的处理方式
+	echo "use system version: ${OSNAME}"
+	if [ "${OSNAME}" == "macos" ]; then
+		curl --insecure -fsSL https://code.midoks.me/midoks/mdserver-web/raw/branch/master/scripts/install/macos.sh | bash
 	else
-		echo "acm.sh.tar.gz 校验不通过"
-		exit 2
+		cd /www/server/mdserver-web && bash scripts/install/${OSNAME}.sh
 	fi
-	
-fi
 
-# macos 下的处理方式
-echo "use system version: ${OSNAME}"
-if [ "${OSNAME}" == "macos" ];then
-	macos_sha256=$(echo $(sha256sum third_party/macos.sh) | awk '{print $1}')
-	if [ "7d9dacaca26e296353819e9df7f6600f388dfc3bb04dc74bc38713f373dfe773" == ${macos_sha256} ];then
-		bash third_party/macos.sh
-	else
-		echo 'macos.sh 校验不通过'
-		exit 2
+	if [ "${OSNAME}" == "macos" ]; then
+		echo "macos end"
+		exit 0
 	fi
-	# curl --insecure -fsSL https://code.midoks.me/midoks/mdserver-web/raw/branch/master/scripts/install/macos.sh | bash
-else
-	cd /www/server/mdserver-web && bash scripts/install/${OSNAME}.sh
-fi
 
-if [ "${OSNAME}" == "macos" ];then
-	echo "macos end"
-	exit 0
-fi
+	cd /www/server/mdserver-web && bash cli.sh start
+	isStart=$(ps -ef | grep 'gunicorn -c setting.py app:app' | grep -v grep | awk '{print $2}')
+	n=0
+	while [ ! -f /etc/rc.d/init.d/mw ]; do
+		echo -e ".\c"
+		sleep 1
+		let n+=1
+		if [ $n -gt 20 ]; then
+			echo -e "start mw fail"
+			exit 1
+		fi
+	done
 
-cd /www/server/mdserver-web && bash cli.sh start
-isStart=`ps -ef|grep 'gunicorn -c setting.py app:app' |grep -v grep|awk '{print $2}'`
-n=0
-while [ ! -f /etc/rc.d/init.d/mw ];
-do
-    echo -e ".\c"
-    sleep 1
-    let n+=1
-    if [ $n -gt 20 ];then
-    	echo -e "start mw fail"
-    	exit 1
-    fi
-done
+	cd /www/server/mdserver-web && bash /etc/rc.d/init.d/mw stop
+	cd /www/server/mdserver-web && bash /etc/rc.d/init.d/mw start
+	cd /www/server/mdserver-web && bash /etc/rc.d/init.d/mw default
 
-cd /www/server/mdserver-web && bash /etc/rc.d/init.d/mw stop
-cd /www/server/mdserver-web && bash /etc/rc.d/init.d/mw start
-cd /www/server/mdserver-web && bash /etc/rc.d/init.d/mw default
-
-sleep 2
-if [ ! -e /usr/bin/mw ]; then
-	if [ -f /etc/rc.d/init.d/mw ];then
-		ln -s /etc/rc.d/init.d/mw /usr/bin/mw
+	sleep 2
+	if [ ! -e /usr/bin/mw ]; then
+		if [ -f /etc/rc.d/init.d/mw ]; then
+			ln -s /etc/rc.d/init.d/mw /usr/bin/mw
+		fi
 	fi
-fi
 
-endTime=`date +%s`
-((outTime=(${endTime}-${startTime})/60))
-echo -e "Time consumed:\033[32m $outTime \033[0mMinute!"
+	endTime=$(date +%s)
+	((outTime = (${endTime} - ${startTime}) / 60))
+	echo -e "Time consumed:\033[32m $outTime \033[0mMinute!"
 
 } 1> >(tee mw-install.log) 2>&1
 
