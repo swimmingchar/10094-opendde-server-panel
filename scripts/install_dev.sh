@@ -85,6 +85,10 @@ if [ $OSNAME != "macos" ];then
 	mkdir -p /www/backup/database
 	mkdir -p /www/backup/site
 
+	# 同步本地数据至安装目
+	if [ -d mdserver-web ];then
+		rsync -vauP --delete --exclude=".*" mdserver-web /www/server/
+	fi
 	if [ ! -d /www/server/mdserver-web ];then
 
 		if [ "$LOCAL_ADDR" == "common" ];then
@@ -102,6 +106,10 @@ if [ $OSNAME != "macos" ];then
 		fi	
 	fi
 
+	# 直接使用本地包安装
+	if [ -d acme.sh ];then
+		bash acme.sh/acme.sh install
+	fi
 	# install acme.sh
 	if [ ! -d /root/.acme.sh ];then
 	    if [ "$LOCAL_ADDR" != "common" ];then
