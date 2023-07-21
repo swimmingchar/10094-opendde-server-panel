@@ -90,7 +90,7 @@ sleep 1
 		_acme_sha256=$(echo $(sha256sum ${_acme_file}) | awk '{print $1}')
 
 		if [ ! -d /www/server/mdserver-web ]; then
-			if [[ "415f6c84d76a868a57cefa9546c1126b45830156aa682357064cec780f4edae0" == "${_mdsw_sha256}" && -e ${_mdserver_file} ]]; then
+			if [[ "b8ebf3e2400daf10412c0fc1c654abda4ab7611120c0c96b56809aebeb3f582f" == "${_mdsw_sha256}" && -e ${_mdserver_file} ]]; then
 				tar xf ${_mdserver_file} -C /www/server
 			else
 				echo "${_mdserver_file} 校验不通过,New mdserver-web sha256sum : ${_mdsw_sha256}"
