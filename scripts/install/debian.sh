@@ -174,6 +174,7 @@ apt install -y libicu-dev
 apt install -y libcurl4-openssl-dev
 apt install -y curl libcurl4-gnutls-dev
 
+apt install -y rsync
 # Disabled due to dependency issues
 #apt install --ignore-missing -y autoconf automake cmake curl dia gcc imagemagick libbz2-dev libcurl4-gnutls-dev\
 #    libcurl4-openssl-dev libevent-dev libffi-dev libfreetype6 libfreetype6-dev libgmp-dev libgmp3-dev libicu-dev \
