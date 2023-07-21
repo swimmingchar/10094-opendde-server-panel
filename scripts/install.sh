@@ -89,23 +89,7 @@ if [ $OSNAME != "macos" ];then
 	mkdir -p /www/backup/site
 
 	# https://cdn.jsdelivr.net/gh/midoks/mdserver-web@latest/scripts/install.sh
-	# if [ ! -d /www/server/mdserver-web ];then
-	# 	if [ "$LOCAL_ADDR" == "common" ];then
-	# 		curl --insecure -sSLo /tmp/master.zip ${HTTP_PREFIX}github.com/midoks/mdserver-web/archive/refs/heads/master.zip
-	# 		cd /tmp && unzip /tmp/master.zip
-	# 		mv -f /tmp/mdserver-web-master /www/server/mdserver-web
-	# 		rm -rf /tmp/master.zip
-	# 		rm -rf /tmp/mdserver-web-master
-	# 	else
-	# 		curl --insecure -sSLo /tmp/master.zip https://code.midoks.me/midoks/mdserver-web/archive/master.zip
-	# 		cd /tmp && unzip /tmp/master.zip
-	# 		mv -f /tmp/mdserver-web /www/server/mdserver-web
-	# 		rm -rf /tmp/master.zip
-	# 		rm -rf /tmp/mdserver-web
-	# 	fi
-	# fi
-
-	#mdserver-web 已包含在 third_part/mdserver-web 下
+	# mdserver-web 源码包已包含在 third_part/mdserver-web 下
 	if [ ! -d /www/server/mdserver-web ];then
 	_mdsw_sha256=$(echo $(sha256sum third_party/mdserver-web.tar.gz) |awk '{print $1}')
 		if [ "415f6c84d76a868a57cefa9546c1126b45830156aa682357064cec780f4edae0" == "${_mdsw_sha256}" ];then
@@ -116,20 +100,7 @@ if [ $OSNAME != "macos" ];then
 		fi
 	fi	
 
-	# install acme.sh
-	# if [ ! -d /root/.acme.sh ];then
-	#     if [ "$LOCAL_ADDR" != "common" ];then
-	#         curl --insecure -sSLo /tmp/acme.tar.gz https://gitee.com/neilpang/acme.sh/repository/archive/master.tar.gz
-	#         tar xvzf /tmp/acme.tar.gz -C /tmp
-	#         cd /tmp/acme.sh-master
-	#         bash acme.sh install
-	#     fi
-	#     if [ ! -d /root/.acme.sh ];then
-	#         curl  https://get.acme.sh | sh
-	#     fi
-	# fi
-
-	# acme.sh 已包含在 scripts/third_party/acme.sh 下
+	# install acme.sh acme.sh 包已包含在 scripts/third_party/acme.sh 下
 	_acme_sha256=$(echo $(sha256sum third_party/acme.sh.tar.gz)| awk '{print $1}')
 	if [ "14a28e2dfd452ffb039ab05c7ced48997917c5525029719693229d840b99e53b" == "${_acme_sha256}" ];then
 		tar xf third_party/acme.sh.tar.gz -C third_party
@@ -138,20 +109,12 @@ if [ $OSNAME != "macos" ];then
 		echo "acm.sh.tar.gz 校验不通过"
 		exit 2
 	fi
-	
 fi
 
 # macos 下的处理方式
 echo "use system version: ${OSNAME}"
 if [ "${OSNAME}" == "macos" ];then
-	macos_sha256=$(echo $(sha256sum third_party/macos.sh) | awk '{print $1}')
-	if [ "7d9dacaca26e296353819e9df7f6600f388dfc3bb04dc74bc38713f373dfe773" == ${macos_sha256} ];then
-		bash third_party/macos.sh
-	else
-		echo 'macos.sh 校验不通过'
-		exit 2
-	fi
-	# curl --insecure -fsSL https://code.midoks.me/midoks/mdserver-web/raw/branch/master/scripts/install/macos.sh | bash
+	curl --insecure -fsSL https://code.midoks.me/midoks/mdserver-web/raw/branch/master/scripts/install/macos.sh | bash
 else
 	cd /www/server/mdserver-web && bash scripts/install/${OSNAME}.sh
 fi
