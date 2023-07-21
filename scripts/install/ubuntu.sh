@@ -111,6 +111,8 @@ apt install -y build-essential
 apt install -y libcurl4-openssl-dev
 apt install -y libcurl4-nss-dev
 apt install -y curl libcurl4-gnutls-dev
+
+apt install -y rsync
 #https://blog.csdn.net/qq_36228377/article/details/123154344
 # ln -s  /usr/include/x86_64-linux-gnu/curl  /usr/include/curl
 if [ ! -d /usr/include/curl ];then
