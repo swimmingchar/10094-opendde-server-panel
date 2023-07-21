@@ -103,7 +103,7 @@ is64bit=$(getconf LONG_BIT)
 		_acme_sha256=$(echo $(sha256sum third_party/acme.sh.tar.gz) | awk '{print $1}')
 		if [ "14a28e2dfd452ffb039ab05c7ced48997917c5525029719693229d840b99e53b" == "${_acme_sha256}" ]; then
 			tar xf third_party/acme.sh.tar.gz -C third_party
-			cd third_part/acme.sh && bash acme.sh install
+			cd third_party/acme.sh && bash acme.sh install
 		else
 			echo "acm.sh.tar.gz 校验不通过"
 			exit 2
