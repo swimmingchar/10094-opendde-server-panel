@@ -124,7 +124,6 @@ if [ $OSNAME != "macos" ];then
 	#         cd /tmp/acme.sh-master
 	#         bash acme.sh install
 	#     fi
-
 	#     if [ ! -d /root/.acme.sh ];then
 	#         curl  https://get.acme.sh | sh
 	#     fi
