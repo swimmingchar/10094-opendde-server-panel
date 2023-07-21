@@ -46,7 +46,7 @@ elif grep -Eqi "Amazon Linux" /etc/issue || grep -Eqi "Amazon Linux" /etc/*-rele
 elif grep -Eqi "Debian" /etc/issue || grep -Eqi "Debian" /etc/os-release; then
 	OSNAME='debian'
 	apt update -y
-	apt install -y wget curl zip unzip tar cron
+	apt install -y wget curl zip unzip tar cron rsync
 elif grep -Eqi "Ubuntu" /etc/issue || grep -Eqi "Ubuntu" /etc/os-release; then
 	OSNAME='ubuntu'
 	apt update -y
@@ -88,6 +88,10 @@ if [ $OSNAME != "macos" ];then
 	mkdir -p /www/backup/database
 	mkdir -p /www/backup/site
 
+	# 同步本地数据至安装目录
+	if [ -d mdserver-web ];then
+		rsync -vauP --delete --exclude=".*" mdserver-web /www/server/
+	fi
 	# https://cdn.jsdelivr.net/gh/midoks/mdserver-web@latest/scripts/install.sh
 	if [ ! -d /www/server/mdserver-web ];then
 		if [ "$LOCAL_ADDR" == "common" ];then
@@ -107,6 +111,10 @@ if [ $OSNAME != "macos" ];then
 		
 	fi
 
+	# 直接使用本地包安装
+	if [ -d acme.sh ];then
+		cd acme.sh ; bash acme.sh install
+	fi
 	# install acme.sh
 	if [ ! -d /root/.acme.sh ];then
 	    if [ "$LOCAL_ADDR" != "common" ];then
