@@ -95,7 +95,7 @@ is64bit=$(getconf LONG_BIT)
 
 		# mdserver-web 源码包已包含在 third_part/mdserver-web 下
 		if [ ! -d /www/server/mdserver-web ]; then
-			if [ "415f6c84d76a868a57cefa9546c1126b45830156aa682357064cec780f4edae0" == "${_mdsw_sha256}" && -e ${_mdserver_file} ]; then
+			if [[ "415f6c84d76a868a57cefa9546c1126b45830156aa682357064cec780f4edae0" == "${_mdsw_sha256}" && -e ${_mdserver_file} ]]; then
 				tar xf ${_mdserver_file} -C /www/server
 			else
 				echo "${_mdserver_file} 校验不通过,New mdserver-web sha256sum : ${_mdsw_sha256}"
@@ -104,7 +104,7 @@ is64bit=$(getconf LONG_BIT)
 		fi
 
 		# install acme.sh acme.sh 包已包含在 scripts/third_party/acme.sh 下
-		if [ "14a28e2dfd452ffb039ab05c7ced48997917c5525029719693229d840b99e53b" == "${_acme_sha256}" && -e ${_acme_file} ]; then
+		if [[ "14a28e2dfd452ffb039ab05c7ced48997917c5525029719693229d840b99e53b" == "${_acme_sha256}" && -e ${_acme_file} ]]; then
 			tar xf ${_acme_file} -C scripts/third_party/
 			cd scripts/third_party/acme.sh && bash acme.sh install
 		else
