@@ -1,6 +1,8 @@
 #!/bin/bash
 PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
 export PATH
+export CMD_PATH=$(cd `dirname $0`; pwd)
+cd $CMD_PATH
 # LANG=en_US.UTF-8
 is64bit=`getconf LONG_BIT`
 
@@ -85,22 +87,25 @@ if [ $OSNAME != "macos" ];then
 	mkdir -p /www/backup/database
 	mkdir -p /www/backup/site
 
-	if [ ! -d /www/server/mdserver-web ];then
+ 	cd $CMD_PATH
+	rsync -avzP ../  /www/server/mdserver-web/
+  	cd $CMD_PATH
+	# if [ ! -d /www/server/mdserver-web ];then
 
-		if [ "$LOCAL_ADDR" == "common" ];then
-			curl --insecure -sSLo /tmp/dev.zip ${HTTP_PREFIX}github.com/midoks/mdserver-web/archive/refs/heads/dev.zip
-			cd /tmp && unzip /tmp/dev.zip
-			mv -f /tmp/mdserver-web-dev /www/server/mdserver-web
-			rm -rf /tmp/dev.zip
-			rm -rf /tmp/mdserver-web-dev
-		else
-			curl --insecure -sSLo /tmp/dev.zip https://code.midoks.me/midoks/mdserver-web/archive/dev.zip
-			cd /tmp && unzip /tmp/dev.zip
-			mv -f /tmp/mdserver-web /www/server/mdserver-web
-			rm -rf /tmp/dev.zip
-			rm -rf /tmp/mdserver-web
-		fi	
-	fi
+	# 	if [ "$LOCAL_ADDR" == "common" ];then
+	# 		curl --insecure -sSLo /tmp/dev.zip ${HTTP_PREFIX}github.com/midoks/mdserver-web/archive/refs/heads/dev.zip
+	# 		cd /tmp && unzip /tmp/dev.zip
+	# 		mv -f /tmp/mdserver-web-dev /www/server/mdserver-web
+	# 		rm -rf /tmp/dev.zip
+	# 		rm -rf /tmp/mdserver-web-dev
+	# 	else
+	# 		curl --insecure -sSLo /tmp/dev.zip https://code.midoks.me/midoks/mdserver-web/archive/dev.zip
+	# 		cd /tmp && unzip /tmp/dev.zip
+	# 		mv -f /tmp/mdserver-web /www/server/mdserver-web
+	# 		rm -rf /tmp/dev.zip
+	# 		rm -rf /tmp/mdserver-web
+	# 	fi	
+	# fi
 
 	# install acme.sh
 	if [ ! -d /root/.acme.sh ];then
