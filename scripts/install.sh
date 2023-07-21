@@ -88,27 +88,29 @@ is64bit=$(getconf LONG_BIT)
 		mkdir -p /www/backup/site
 
 		# https://cdn.jsdelivr.net/gh/midoks/mdserver-web@latest/scripts/install.sh
-		_mdsw_sha256=$(echo $(sha256sum third_party/mdserver-web.tar.gz) | awk '{print $1}')
-		_acme_sha256=$(echo $(sha256sum third_party/acme.sh.tar.gz) | awk '{print $1}')
+		_mdserver_file="scripts/third_party/mdserver-web.tar.gz"
+		_acme_file="scripts/third_party/acme.sh.tar.gz"
+		_mdsw_sha256=$(echo $(sha256sum ${_mdserver_file}) | awk '{print $1}')
+		_acme_sha256=$(echo $(sha256sum ${_acme_file}) | awk '{print $1}'	
 
 		# mdserver-web 源码包已包含在 third_part/mdserver-web 下
 		if [ ! -d /www/server/mdserver-web ]; then
-			if [ "415f6c84d76a868a57cefa9546c1126b45830156aa682357064cec780f4edae0" == "${_mdsw_sha256}" && -e third_party/mdserver-web.tar.gz ]; then
-				tar xf third_party/mdserver-web.tar.gz -C /www/server
+			if [ "415f6c84d76a868a57cefa9546c1126b45830156aa682357064cec780f4edae0" == "${_mdsw_sha256}" && -e ${_mdserver_file} ]; then
+				tar xf ${_mdserver_file} -C /www/server
 			else
-				echo "mdserver-web.tar.gz 校验不通过,New mdserver-web sha256sum : ${_mdsw_sha256}"
+				echo "${_mdserver_file} 校验不通过,New mdserver-web sha256sum : ${_mdsw_sha256}"
 				exit 2
 			fi
 		fi
 
 		# install acme.sh acme.sh 包已包含在 scripts/third_party/acme.sh 下
-		if [ "14a28e2dfd452ffb039ab05c7ced48997917c5525029719693229d840b99e53b" == "${_acme_sha256}" && -e third_party/acme.sh.tar.gz ]; then
-			tar xf third_party/acme.sh.tar.gz -C third_party
-			cd third_party/acme.sh && bash acme.sh install
+		if [ "14a28e2dfd452ffb039ab05c7ced48997917c5525029719693229d840b99e53b" == "${_acme_sha256}" && -e ${_acme_file} ]; then
+			tar xf ${_acme_file} -C scripts/third_party/
+			cd scripts/third_party/acme.sh && bash acme.sh install
 		else
-			echo "acm.sh.tar.gz 校验不通过,New acme sha256sum : ${_acme_sha256}"
+			echo "${_acme_file} 校验不通过,New acme sha256sum : ${_acme_sha256}"
 			exit 2
-		fi
+		fi	
 	fi
 
 	# macos 下的处理方式
