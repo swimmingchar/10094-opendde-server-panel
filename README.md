@@ -5,6 +5,10 @@
 ```
 # root用户
 git clone git@github.com:opendde/10094-opendde-server-panel.git
-cd 10094-opendde-server-panel/scripts/
-./install_dev.sh
+cd 10094-opendde-server-panel/
+
+./scripts/install_dev.sh
+# 更新
+git pull origin master
+./scripts/update_dev.sh
 ```
