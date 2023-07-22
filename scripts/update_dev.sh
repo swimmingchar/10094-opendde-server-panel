@@ -1,6 +1,9 @@
 #!/bin/bash
 PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:~/bin
 export PATH
+export CMD_PATH=$(cd `dirname $0`; pwd)
+cd $CMD_PATH
+set -x
 # LANG=en_US.UTF-8
 is64bit=`getconf LONG_BIT`
 
@@ -78,20 +81,23 @@ fi
 
 echo "update mdserver-web code start"
 
-if [ "$LOCAL_ADDR" != "common" ];then
-	curl --insecure -sSLo /tmp/dev.zip https://code.midoks.me/midoks/mdserver-web/archive/dev.zip
-	cd /tmp && unzip /tmp/dev.zip
+cd $CMD_PATH
+rsync -avzP ../  /www/server/mdserver-web/
+cd $CMD_PATH
+# if [ "$LOCAL_ADDR" != "common" ];then
+# 	curl --insecure -sSLo /tmp/dev.zip https://code.midoks.me/midoks/mdserver-web/archive/dev.zip
+# 	cd /tmp && unzip /tmp/dev.zip
 
-	$CP_CMD -rf /tmp/mdserver-web/* /www/server/mdserver-web
-	rm -rf /tmp/master.zip
-	rm -rf /tmp/mdserver-web
-else
-	curl --insecure -sSLo /tmp/dev.zip ${HTTP_PREFIX}github.com/midoks/mdserver-web/archive/refs/heads/dev.zip
-	cd /tmp && unzip /tmp/dev.zip
-	$CP_CMD -rf /tmp/mdserver-web-dev/* /www/server/mdserver-web
-	rm -rf /tmp/dev.zip
-	rm -rf /tmp/mdserver-web-dev
-fi
+# 	$CP_CMD -rf /tmp/mdserver-web/* /www/server/mdserver-web
+# 	rm -rf /tmp/master.zip
+# 	rm -rf /tmp/mdserver-web
+# else
+# 	curl --insecure -sSLo /tmp/dev.zip ${HTTP_PREFIX}github.com/midoks/mdserver-web/archive/refs/heads/dev.zip
+# 	cd /tmp && unzip /tmp/dev.zip
+# 	$CP_CMD -rf /tmp/mdserver-web-dev/* /www/server/mdserver-web
+# 	rm -rf /tmp/dev.zip
+# 	rm -rf /tmp/mdserver-web-dev
+# fi
 
 echo "update mdserver-web code end"
 
